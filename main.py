@@ -13,8 +13,8 @@ EMOJI_KASA = "<a:kasa:1571615073976324196>"
 
 # Linki do animacji (GIFY)
 GIF_RULETKA = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578321458397204/Td9fnldXXnoOJVy.gif"
-GIF_ORZEL = "https://cdn.discordapp.com/attachments/1505624605535113349/1572676781587046471/Polish_Commemorative_Coin_Coin_Flip_Heads_To_Heads_02bTP8fz.mp4"
-GIF_RESZKA = "https://cdn.discordapp.com/attachments/1505624605535113349/1572676809018052638/Polish_Commemorative_Coin_Coin_Flip_Heads_To_Tails_AEKpk18S.mp4"
+GIF_ORZEL = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578056042979411/5z6HiMsa.gif"
+GIF_RESZKA = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578114075103355/JfEnIU0b.gif"
 
 # Konfiguracja ról do wypłat (!Odbierz) -> [ID Roli: Kwota]
 SALARY_CONFIG = {
