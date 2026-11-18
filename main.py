@@ -12,9 +12,9 @@ ID_KANAL_EKONOMIA = 1386424048270966820
 EMOJI_KASA = "<a:kasa:1572561091014164580>"
 
 # Linki do animacji (GIFY)
-GIF_RULETKA = "https://klipy.com/gifs/casino-36"
-GIF_ORZEL = "https://klipy.com/gifs/heads-coinflip"
-GIF_RESZKA = "https://klipy.com/gifs/coins-tails"
+GIF_RULETKA = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578321458397204/Td9fnldXXnoOJVy.gif"
+GIF_ORZEL = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578056042979411/5z6HiMsa.gif"
+GIF_RESZKA = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578114075103355/JfEnIU0b.gif"
 
 # Konfiguracja ról do wypłat (!Odbierz) -> [ID Roli: Kwota]
 SALARY_CONFIG = {
@@ -249,7 +249,7 @@ async def ruletka(ctx: commands.Context, kwota: int, kolor: str, numerek: int = 
     embed_start.set_image(url=GIF_RULETKA)
     msg = await ctx.send(embed=embed_start)
     
-    await asyncio.sleep(3.5)
+    await asyncio.sleep(4.0)
     
     wylosowany_kolor = random.choice(["czerwony", "czarny"])
     wylosowana_liczba = random.randint(0, 36)
@@ -288,10 +288,10 @@ async def moneta(ctx: commands.Context, kwota: int, wybor: str):
         return await ctx.send("❌ Wybierz `orzel` lub `reszka`.", ephemeral=True)
 
     embed_start = discord.Embed(title="🪙 Rzut Monetą", description="Moneta szybuje wysoko w górę... obracając się!", color=discord.Color.gold())
-    embed_start.set_image(url="https://klipy.com/gifs/heads-coinflip")
+    embed_start.set_image(url=GIF_ORZEL)
     msg = await ctx.send(embed=embed_start)
     
-    await asyncio.sleep(2.5)
+    await asyncio.sleep(3.0)
     
     wynik = random.choice(["orzel", "reszka"])
     gif_wynik = GIF_ORZEL if wynik == "orzel" else GIF_RESZKA
