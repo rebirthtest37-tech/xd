@@ -19,13 +19,13 @@ GIF_RESZKA = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578
 # Konfiguracja ról do wypłat (!Odbierz) -> [ID Roli: Kwota]
 SALARY_CONFIG = {
     1505624602083332097: 1500,  # Pomoc Drogowa
-    1505624602083332105: 4500,    # Zarzad Pomocy Drogowej
+    1505624602083332105: 4500,  # Zarzad Pomocy Drogowej
     1505624602083332098: 1500,  # Straz
-    1505624602095779861: 5000,    # Zarzad Straz
-    1505624602083332099: 1500,    # PRM
-    1505624602095779862: 5000,    # Zarzad PRM
-    1505624602083332100: 1500,    # KSP
-    1505624602095779863: 5000,    # Zarzad KSP
+    1505624602095779861: 5000,  # Zarzad Straz
+    1505624602083332099: 1500,  # PRM
+    1505624602095779862: 5000,  # Zarzad PRM
+    1505624602083332100: 1500,  # KSP
+    1505624602095779863: 5000,  # Zarzad KSP
     1505624602062229802: 800    # Obywatel
 }
 
@@ -164,8 +164,18 @@ async def pracuj(ctx: commands.Context):
         f"📦 Rozwoziłeś paczki i dostałeś {EMOJI_KASA} **{zarobek} ZŁ**",
         f"🏪 Pomagałeś w sklepie i zarobiłeś {EMOJI_KASA} **{zarobek} ZŁ**",
         f"🕵️‍♂️ Jakiejś Staruszce wypadło {EMOJI_KASA} **{zarobek} ZŁ** z portfela i to zajebałeś",
-        f"👮 Policja bezprawnie cie spałowała i wypłacili ci {EMOJI_KASA} **{zarobek} ZŁ**",
-        f"{EMOJI_KASA} Wziełeś chwilówke na {EMOJI_KASA} **{zarobek} ZŁ**"
+        f"👮 Policja bezprawnie cie spałowała i wypłacili ci {EMOJI_KASA} **{zarobek} ZŁ** odszkodowania",
+        f"💻 Napisałeś skrypt bota dla Vesper RP, a wdzięczny admin rzucił ci {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🐔 Sprzedałeś rzadkie, świecące jajko od kury sąsiada za {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🚗 Przepchnąłeś auto admina na stację benzynową, za co dostałeś {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🍕 Zjadłeś gigantyczną pizzę na czas i wygrałeś {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🧹 Umyłeś okna w radiowozie pistoletem na wodę, a uśmiechnięty komendant rzucił ci {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🪗 Grałeś na akordeonie pod urzędem miasta, zebrany tłum rzucił ci {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🐈 Znalazłeś zaginionego kota prezesa banku, w nagrodę dostałeś {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🦖 Przebrałeś się za dinozaura i straszyłeś przechodniów, zadowolony sponsor dał ci {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🎤 Śpiewałeś piosenki Zenka Martyniuka pod prysznicem, sąsiad zapłacił ci {EMOJI_KASA} **{zarobek} ZŁ** żebyś w końcu przestał",
+        f"🤫 Sprzedałeś poufne plotki lokalnej gazecie, zarabiając {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"{EMOJI_KASA} Wziąłeś chwilówkę na {EMOJI_KASA} **{zarobek} ZŁ** i uciekłeś przed komornikiem"
     ]
     opis = random.choice(teksty_pracy)
 
@@ -190,7 +200,8 @@ async def portfel(ctx: commands.Context, member: discord.Member = None):
 
 # --- SYSTEM SKLEPU ---
 class ShopSelect(discord.ui.Select):
-    def __init__(self):
+    def __init__(self, member: discord.Member):
+        self.member = member
         options = [
             discord.SelectOption(label="Bronie Palne", emoji="🔫"),
             discord.SelectOption(label="Licencje", emoji="📜"),
@@ -202,14 +213,21 @@ class ShopSelect(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         cat = self.values[0]
         items = SHOP_CONFIG.get(cat, [])
-        opis = "\n".join([f"{item['emoji']} **{item['nazwa']}** — {EMOJI_KASA} **{item['cena']:,} ZŁ**".replace(",", " ") for item in items]) or "Brak produktów."
+        opis_lines = []
+        for item in items:
+            if item["rola_id"] and interaction.guild.get_role(item["rola_id"]) in self.member.roles:
+                opis_lines.append(f"{item['emoji']} **{item['nazwa']}** — [✅ POSIADASZ]")
+            else:
+                opis_lines.append(f"{item['emoji']} **{item['nazwa']}** — {EMOJI_KASA} **{item['cena']:,} ZŁ**".replace(",", " "))
+
+        opis = "\n".join(opis_lines) or "Brak produktów."
         embed = discord.Embed(title=f"🛒 Sklep - {cat}", description=f"{opis}\n\n─────────────────\n*Użyj komendy `!Kup [Dokładna nazwa]` aby dokonać zakupu.*", color=discord.Color.orange())
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 class ShopView(discord.ui.View):
-    def __init__(self):
+    def __init__(self, member: discord.Member):
         super().__init__(timeout=60)
-        self.add_item(ShopSelect())
+        self.add_item(ShopSelect(member))
 
 @bot.hybrid_command(name="sklep", description="Otwórz sklep z przedmiotami")
 async def sklep(ctx: commands.Context):
@@ -217,7 +235,7 @@ async def sklep(ctx: commands.Context):
         return await ctx.send(f"❌ Tej komendy możesz używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
     
     embed = discord.Embed(title="🛒 SKLEP VESPER RP", description="Wybierz interesującą Cię kategorię z menu poniżej:", color=discord.Color.orange())
-    await ctx.send(embed=embed, view=ShopView())
+    await ctx.send(embed=embed, view=ShopView(ctx.author))
 
 @bot.hybrid_command(name="kup", description="Kup przedmiot ze sklepu")
 async def kup(ctx: commands.Context, *, nazwa: str):
@@ -234,6 +252,11 @@ async def kup(ctx: commands.Context, *, nazwa: str):
 
     if not przedmiot:
         return await ctx.send("❌ Taki przedmiot nie istnieje w sklepie.", ephemeral=True)
+
+    if przedmiot["rola_id"]:
+        role = ctx.guild.get_role(przedmiot["rola_id"])
+        if role and role in ctx.author.roles:
+            return await ctx.send(f"❌ Posiadasz już ten przedmiot (**{przedmiot['nazwa']}**)! Nie możesz kupić go ponownie.", ephemeral=True)
 
     wallet, _, _ = get_balance(ctx.author.id)
     if wallet < przedmiot["cena"]:
@@ -253,12 +276,21 @@ async def kup(ctx: commands.Context, *, nazwa: str):
 
 # --- RULETKA Z ANIMACJĄ ---
 @bot.hybrid_command(name="ruletka", description="Zagraj w ruletkę")
-async def ruletka(ctx: commands.Context, kwota: int, kolor: str, numerek: int = None):
+async def ruletka(ctx: commands.Context, kwota: str, kolor: str, numerek: int = None):
     if ctx.channel.id != ID_KANAL_EKONOMIA:
         return await ctx.send(f"❌ Tej komendy możesz używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
 
     wallet, _, _ = get_balance(ctx.author.id)
-    if kwota <= 0 or wallet < kwota:
+    
+    if kwota.lower() == "all":
+        kwota_val = wallet
+    else:
+        try:
+            kwota_val = int(kwota)
+        except ValueError:
+            return await ctx.send("❌ Podaj prawidłową kwotę lub wpisz `all`.", ephemeral=True)
+
+    if kwota_val <= 0 or wallet < kwota_val:
         return await ctx.send("❌ Nie masz tyle pieniędzy w portfelu lub podano złą kwotę.", ephemeral=True)
 
     kolor = kolor.lower()
@@ -276,31 +308,40 @@ async def ruletka(ctx: commands.Context, kwota: int, kolor: str, numerek: int = 
 
     wygrana = 0
     if kolor == wylosowany_kolor:
-        wygrana = kwota * 2
+        wygrana = kwota_val * 2
 
     if numerek is not None and numerek == wylosowana_liczba:
-        wygrana = kwota * 14
+        wygrana = kwota_val * 14
 
     embed_result = discord.Embed(title="🎰 Wynik Ruletki", color=discord.Color.green() if wygrana > 0 else discord.Color.red())
     
     if wygrana > 0:
-        update_balance(ctx.author.id, wygrana - kwota)
+        update_balance(ctx.author.id, wygrana - kwota_val)
         embed_result.description = f"🎉 Wylosowano: **{wylosowany_kolor.upper()} ({wylosowana_liczba})**!\n\nWygrana: {EMOJI_KASA} **{wygrana:,} ZŁ**!".replace(",", " ")
     else:
-        update_balance(ctx.author.id, -kwota)
-        embed_result.description = f"😢 Wylosowano: **{wylosowany_kolor.upper()} ({wylosowana_liczba})**.\n\nPrzegrałeś: {EMOJI_KASA} **{kwota:,} ZŁ**.".replace(",", " ")
+        update_balance(ctx.author.id, -kwota_val)
+        embed_result.description = f"😢 Wylosowano: **{wylosowany_kolor.upper()} ({wylosowana_liczba})**.\n\nPrzegrałeś: {EMOJI_KASA} **{kwota_val:,} ZŁ**.".replace(",", " ")
         
     await msg.delete()
     await ctx.send(embed=embed_result)
 
 # --- RZUT MONETĄ Z ANIMACJĄ ---
 @bot.hybrid_command(name="moneta", description="Zagraj w rzut monetą (50/50)")
-async def moneta(ctx: commands.Context, kwota: int, wybor: str):
+async def moneta(ctx: commands.Context, kwota: str, wybor: str):
     if ctx.channel.id != ID_KANAL_EKONOMIA:
         return await ctx.send(f"❌ Tej komendy możesz używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
 
     wallet, _, _ = get_balance(ctx.author.id)
-    if kwota <= 0 or wallet < kwota:
+    
+    if kwota.lower() == "all":
+        kwota_val = wallet
+    else:
+        try:
+            kwota_val = int(kwota)
+        except ValueError:
+            return await ctx.send("❌ Podaj prawidłową kwotę lub wpisz `all`.", ephemeral=True)
+
+    if kwota_val <= 0 or wallet < kwota_val:
         return await ctx.send("❌ Nie masz tyle pieniędzy w portfelu.", ephemeral=True)
 
     wybor = wybor.lower()
@@ -320,14 +361,35 @@ async def moneta(ctx: commands.Context, kwota: int, wybor: str):
     embed_result.set_image(url=gif_wynik)
 
     if wybor == wynik:
-        update_balance(ctx.author.id, kwota)
-        embed_result.description = f"🎉 Doskonały strzał! Wygrałeś {EMOJI_KASA} **{(kwota * 2):,} ZŁ**!".replace(",", " ")
+        update_balance(ctx.author.id, kwota_val)
+        embed_result.description = f"🎉 Doskonały strzał! Wygrałeś {EMOJI_KASA} **{(kwota_val * 2):,} ZŁ**!".replace(",", " ")
     else:
-        update_balance(ctx.author.id, -kwota)
-        embed_result.description = f"😢 Niestety tym razem pech! Przegrałeś {EMOJI_KASA} **{kwota:,} ZŁ**.".replace(",", " ")
+        update_balance(ctx.author.id, -kwota_val)
+        embed_result.description = f"😢 Niestety tym razem pech! Przegrałeś {EMOJI_KASA} **{kwota_val:,} ZŁ**.".replace(",", " ")
 
     await msg.delete()
     await ctx.send(embed=embed_result)
+
+# --- KOMENDY ADMINISTRACYJNE ---
+@bot.hybrid_command(name="dodajkase", description="Dodaj gotówkę wskazanemu obywatelowi")
+async def dodajkase(ctx: commands.Context, osoba: discord.Member, ilosc: int):
+    if not ctx.author.guild_permissions.administrator:
+        return await ctx.send("❌ Ta komenda jest dostępna wyłącznie dla Administratorów serwera.", ephemeral=True)
+    if ilosc <= 0:
+        return await ctx.send("❌ Podaj wartość większą niż 0.", ephemeral=True)
+
+    update_balance(osoba.id, ilosc)
+    await ctx.send(f"✅ Pomyślnie dodano {EMOJI_KASA} **{ilosc:,} ZŁ** do portfela użytkownika {osoba.mention}.".replace(",", " "))
+
+@bot.hybrid_command(name="odejmijkase", description="Odejmij gotówkę wskazanemu obywatelowi")
+async def odejmijkase(ctx: commands.Context, osoba: discord.Member, ilosc: int):
+    if not ctx.author.guild_permissions.administrator:
+        return await ctx.send("❌ Ta komenda jest dostępna wyłącznie dla Administratorów serwera.", ephemeral=True)
+    if ilosc <= 0:
+        return await ctx.send("❌ Podaj wartość większą niż 0.", ephemeral=True)
+
+    update_balance(osoba.id, -ilosc)
+    await ctx.send(f"✅ Pomyślnie odjęto {EMOJI_KASA} **{ilosc:,} ZŁ** z portfela użytkownika {osoba.mention}.".replace(",", " "))
 
 @bot.event
 async def on_ready():
