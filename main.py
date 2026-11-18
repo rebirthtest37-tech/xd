@@ -162,7 +162,10 @@ async def pracuj(ctx: commands.Context):
         f"💼 Pracowałeś u pani która zapłaciła ci {EMOJI_KASA} **{zarobek} ZŁ**",
         f"🏗️ Pracowałeś na budowie i zarobiłeś {EMOJI_KASA} **{zarobek} ZŁ**",
         f"📦 Rozwoziłeś paczki i dostałeś {EMOJI_KASA} **{zarobek} ZŁ**",
-        f"🏪 Pomagałeś w sklepie i zarobiłeś {EMOJI_KASA} **{zarobek} ZŁ**"
+        f"🏪 Pomagałeś w sklepie i zarobiłeś {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🕵️‍♂️ Jakiejś Staruszce wypadło {EMOJI_KASA} **{zarobek} ZŁ** z portfela i to zajebałeś",
+        f"👮 Policja bezprawnie cie spałowała i wypłacili ci {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"{EMOJI_KASA} Wziełeś chwilówke na {EMOJI_KASA} **{zarobek} ZŁ**"
     ]
     opis = random.choice(teksty_pracy)
 
