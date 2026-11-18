@@ -245,11 +245,11 @@ async def ruletka(ctx: commands.Context, kwota: int, kolor: str, numerek: int = 
     if kolor not in ["czerwony", "czarny"]:
         return await ctx.send("❌ Wybierz prawidłowy kolor: `czerwony` lub `czarny`.", ephemeral=True)
 
-    embed = discord.Embed(title="🎰 Kasyno Vesper", description="Krupier kręci kołem ruletki... Trwa losowanie!", color=discord.Color.dark_magenta())
-    embed.set_image(url=GIF_RULETKA)
-    msg = await ctx.send(embed=embed)
+    embed_start = discord.Embed(title="🎰 Kasyno Vesper", description="Krupier kręci kołem ruletki... Trwa losowanie!", color=discord.Color.dark_magenta())
+    embed_start.set_image(url=GIF_RULETKA)
+    msg = await ctx.send(embed=embed_start)
     
-    await asyncio.sleep(3.0)
+    await asyncio.sleep(3.5)
     
     wylosowany_kolor = random.choice(["czerwony", "czarny"])
     wylosowana_liczba = random.randint(0, 36)
@@ -270,7 +270,8 @@ async def ruletka(ctx: commands.Context, kwota: int, kolor: str, numerek: int = 
         update_balance(ctx.author.id, -kwota)
         embed_result.description = f"😢 Wylosowano: **{wylosowany_kolor.upper()} ({wylosowana_liczba})**.\n\nPrzegrałeś: {EMOJI_KASA} **{kwota:,} ZŁ**.".replace(",", " ")
         
-    await msg.edit(embed=embed_result)
+    await msg.delete()
+    await ctx.send(embed=embed_result)
 
 # --- RZUT MONETĄ Z ANIMACJĄ ---
 @bot.hybrid_command(name="moneta", description="Zagraj w rzut monetą (50/50)")
@@ -286,9 +287,9 @@ async def moneta(ctx: commands.Context, kwota: int, wybor: str):
     if wybor not in ["orzel", "reszka"]:
         return await ctx.send("❌ Wybierz `orzel` lub `reszka`.", ephemeral=True)
 
-    embed = discord.Embed(title="🪙 Rzut Monetą", description="Moneta szybuje wysoko w górę... obracając się!", color=discord.Color.gold())
-    embed.set_image(url="https://klipy.com/gifs/heads-coinflip")
-    msg = await ctx.send(embed=embed)
+    embed_start = discord.Embed(title="🪙 Rzut Monetą", description="Moneta szybuje wysoko w górę... obracając się!", color=discord.Color.gold())
+    embed_start.set_image(url="https://klipy.com/gifs/heads-coinflip")
+    msg = await ctx.send(embed=embed_start)
     
     await asyncio.sleep(2.5)
     
@@ -305,7 +306,8 @@ async def moneta(ctx: commands.Context, kwota: int, wybor: str):
         update_balance(ctx.author.id, -kwota)
         embed_result.description = f"😢 Niestety tym razem pech! Przegrałeś {EMOJI_KASA} **{kwota:,} ZŁ**.".replace(",", " ")
 
-    await msg.edit(embed=embed_result)
+    await msg.delete()
+    await ctx.send(embed=embed_result)
 
 @bot.event
 async def on_ready():
