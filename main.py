@@ -8,8 +8,8 @@ import asyncio
 from datetime import datetime, timedelta
 
 # --- KONFIGURACJA ---
-ID_KANAL_EKONOMIA = 1386424048270966820
-EMOJI_KASA = "<a:kasa:1572561091014164580>"
+ID_KANAL_EKONOMIA = 1505624605535113349
+EMOJI_KASA = "<a:kasa:1571615073976324196>"
 
 # Linki do animacji (GIFY)
 GIF_RULETKA = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578321458397204/Td9fnldXXnoOJVy.gif"
@@ -18,25 +18,42 @@ GIF_RESZKA = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578
 
 # Konfiguracja ról do wypłat (!Odbierz) -> [ID Roli: Kwota]
 SALARY_CONFIG = {
-    1386424048220766372: 5500,  # Staff
-    1386424048220766373: 3500,  # Policja
-    1386424048220766374: 500    # Obywatel / Cywil
+    1505624602083332097: 1500,  # Pomoc Drogowa
+    1505624602083332105: 4500,    # Zarzad Pomocy Drogowej
+    1505624602083332098: 1500,  # Straz
+    1505624602095779861: 5000,    # Zarzad Straz
+    1505624602083332099: 1500,    # PRM
+    1505624602095779862: 5000,    # Zarzad PRM
+    1505624602083332100: 1500,    # KSP
+    1505624602095779863: 5000,    # Zarzad KSP
+    1505624602062229802: 800    # Obywatel
 }
 
 # Konfiguracja Sklepu z dedykowanymi ikonami i przypisaniem ról
 SHOP_CONFIG = {
     "Bronie Palne": [
-        {"nazwa": "mac-9", "cena": 1500, "rola_id": None, "emoji": "🔫"},
-        {"nazwa": "pistol", "cena": 3000, "rola_id": None, "emoji": "🔫"}
+        {"nazwa": "Beretta M9", "cena": 5500, "rola_id": 1505624602007572570, "emoji": "🔫"},
+        {"nazwa": "Colt M1911", "cena": 5900, "rola_id": 1505624602041122857, "emoji": "🔫"},
+        {"nazwa": "Desert Eagle", "cena": 7000, "rola_id": 1505624602041122858, "emoji": "🔫"},
+        {"nazwa": "Tec-9", "cena": 9000, "rola_id": 1505624602041122859, "emoji": "🔫"}
     ],
     "Licencje": [
-        {"nazwa": "licencja-bron", "cena": 5000, "rola_id": 1505624602083332100, "emoji": "📜"}
+        {"nazwa": "Karta Wędkarska ", "cena": 2500, "rola_id": 1505624602007572564, "emoji": "🎣"},
+        {"nazwa": "Licencja na broń", "cena": 5000, "rola_id": 1505624602041122860, "emoji": "🔫"},
+        {"nazwa": "Licencja na Drona", "cena": 5000, "rola_id": 1505624602007572569, "emoji": "🚁"}
     ],
     "Domy": [
-        {"nazwa": "apartament", "cena": 25000, "rola_id": None, "emoji": "🏠"}
+        {"nazwa": "Mały Dom", "cena": 15000, "rola_id": 1505624602007572565, "emoji": "🏡"},
+        {"nazwa": "Średni Dom", "cena": 25000, "rola_id": 1505624602007572566, "emoji": "🏘️"},
+        {"nazwa": "Duży Dom", "cena": 35000, "rola_id": 1505624602007572567, "emoji": "🏢"}
     ],
     "Inne": [
-        {"nazwa": "Amunicja", "cena": 200, "rola_id": None, "emoji": "🎒"}
+        {"nazwa": "Prawo Jazdy kat. B", "cena": 2500, "rola_id": 1505624602041122865, "emoji": "🚗"},
+        {"nazwa": "Prawo Jazdy kat. C", "cena": 3500, "rola_id": 1505624602041122864, "emoji": "🚚"},
+        {"nazwa": "Prawo Jazdy kat. C+E", "cena": 3500, "rola_id": 1505624602041122863, "emoji": "🚛"},
+        {"nazwa": "Prawo Jazdy kat. T", "cena": 1000, "rola_id": 1505624602041122861, "emoji": "🚜"},
+        {"nazwa": "Dron", "cena": 3600, "rola_id": 1505624602007572568, "emoji": "✈️"},
+        {"nazwa": "Telefon", "cena": 150, "rola_id": 1505624602007572563, "emoji": "📱"}
     ]
 }
 
