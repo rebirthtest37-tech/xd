@@ -8,21 +8,21 @@ import asyncio
 from datetime import datetime, timedelta
 
 # --- KONFIGURACJA ---
-ID_KANAL_EKONOMIA = 1505624605535113349
+ID_KANAL_EKONOMIA = 1386424048270966820
 EMOJI_KASA = "<a:kasa:1571615073976324196>"
 
 # Konfiguracja ról do wypłat (!Odbierz) -> [ID Roli: Kwota]
 SALARY_CONFIG = {
-    1505624602125013013: 5500,  # Przykład: Rola Staff
-    1505624602083332100: 3500,  # Przykład: Policja
-    1505624601965760646: 500    # Przykład: Obywatel / Cywil
+    1386424048220766372: 5500,  # Przykład: Rola Staff
+    1386424048220766373: 3500,  # Przykład: Policja
+    1386424048220766374: 500    # Przykład: Obywatel / Cywil
 }
 
 # Konfiguracja Sklepu
 # role_id ustaw na None, jeśli przedmiot ma nie nadawać roli
 SHOP_CONFIG = {
     "Bronie Palne": [
-        {"nazwa": "mac-9", "cena": 1500, "rola_id": None},
+        {"nazwa": "mac-9", "cena": 1500, "rola_id": 1386424048220766371},
         {"nazwa": "pistol", "cena": 3000, "rola_id": None}
     ],
     "Licencje": [
