@@ -9,30 +9,34 @@ from datetime import datetime, timedelta
 
 # --- KONFIGURACJA ---
 ID_KANAL_EKONOMIA = 1386424048270966820
-EMOJI_KASA = "<a:kasa:1571615073976324196>"
+EMOJI_KASA = "<a:kasa:1572561091014164580>"
+
+# Linki do animacji (GIFY)
+GIF_RULETKA = "https://klipy.com/gifs/casino-36"
+GIF_ORZEL = "https://klipy.com/gifs/heads-coinflip"
+GIF_RESZKA = "https://klipy.com/gifs/coins-tails"
 
 # Konfiguracja ról do wypłat (!Odbierz) -> [ID Roli: Kwota]
 SALARY_CONFIG = {
-    1386424048220766372: 5500,  # Przykład: Rola Staff
-    1386424048220766373: 3500,  # Przykład: Policja
-    1386424048220766374: 500    # Przykład: Obywatel / Cywil
+    1386424048220766372: 5500,  # Staff
+    1386424048220766373: 3500,  # Policja
+    1386424048220766374: 500    # Obywatel / Cywil
 }
 
-# Konfiguracja Sklepu
-# role_id ustaw na None, jeśli przedmiot ma nie nadawać roli
+# Konfiguracja Sklepu z dedykowanymi ikonami i przypisaniem ról
 SHOP_CONFIG = {
     "Bronie Palne": [
-        {"nazwa": "mac-9", "cena": 1500, "rola_id": 1386424048220766371},
-        {"nazwa": "pistol", "cena": 3000, "rola_id": None}
+        {"nazwa": "mac-9", "cena": 1500, "rola_id": None, "emoji": "🔫"},
+        {"nazwa": "pistol", "cena": 3000, "rola_id": None, "emoji": "🔫"}
     ],
     "Licencje": [
-        {"nazwa": "licencja-bron", "cena": 5000, "rola_id": 1505624602083332100}
+        {"nazwa": "licencja-bron", "cena": 5000, "rola_id": 1505624602083332100, "emoji": "📜"}
     ],
     "Domy": [
-        {"nazwa": "apartament", "cena": 25000, "rola_id": None}
+        {"nazwa": "apartament", "cena": 25000, "rola_id": None, "emoji": "🏠"}
     ],
     "Inne": [
-        {"nazwa": "Amunicja", "cena": 200, "rola_id": None}
+        {"nazwa": "Amunicja", "cena": 200, "rola_id": None, "emoji": "🎒"}
     ]
 }
 
@@ -88,7 +92,7 @@ def update_balance(user_id, amount):
 @bot.hybrid_command(name="odbierz", description="Odbierz dzienne wynagrodzenie ze swoich ról")
 async def odbierz(ctx: commands.Context):
     if ctx.channel.id != ID_KANAL_EKONOMIA:
-        return await ctx.send(f"❌ Tej komendy można używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
+        return await ctx.send(f"❌ Tej komendy możesz używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
 
     wallet, last_collect, _ = get_balance(ctx.author.id)
     now = datetime.now()
@@ -105,7 +109,7 @@ async def odbierz(ctx: commands.Context):
         role = ctx.guild.get_role(r_id)
         if role and role in ctx.author.roles:
             total_added += amount
-            lines.append(f"{EMOJI_KASA} {role.mention} » **{amount:,} ZŁ**".replace(",", " "))
+            lines.append(f"🟢 {role.mention} » **{amount:,} ZŁ**".replace(",", " "))
 
     if total_added == 0:
         return await ctx.send("❌ Nie posiadasz żadnej roli uprawniającej do pobrania wypłaty.", ephemeral=True)
@@ -117,15 +121,15 @@ async def odbierz(ctx: commands.Context):
     cur.close()
     conn.close()
 
-    embed = discord.Embed(title="Przychód odebrany pomyślnie", color=discord.Color.green())
-    embed.description = "\n".join(lines) + "\n\n---\n" + f"Suma: + {EMOJI_KASA} **{total_added:,} ZŁ**".replace(",", " ")
+    embed = discord.Embed(title="📈 Przychód odebrany pomyślnie", color=discord.Color.green())
+    embed.description = "\n".join(lines) + "\n\n─────────────────\n" + f"Suma: + {EMOJI_KASA} **{total_added:,} ZŁ**".replace(",", " ")
     await ctx.send(embed=embed)
 
 # --- KOMENDA / PRACUJ ---
 @bot.hybrid_command(name="pracuj", description="Zarób dodatkowe PLN-y")
 async def pracuj(ctx: commands.Context):
     if ctx.channel.id != ID_KANAL_EKONOMIA:
-        return await ctx.send(f"❌ Tej komendy można używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
+        return await ctx.send(f"❌ Tej komendy możesz używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
 
     _, _, last_work = get_balance(ctx.author.id)
     now = datetime.now()
@@ -138,10 +142,10 @@ async def pracuj(ctx: commands.Context):
 
     zarobek = random.randint(100, 500)
     teksty_pracy = [
-        f"Pracowałeś u pani która zapłaciła ci {EMOJI_KASA} **{zarobek} ZŁ**",
-        f"Pracowałeś na budowie i zarobiłeś {EMOJI_KASA} **{zarobek} ZŁ**",
-        f"Rozwoziłeś paczki i dostałeś {EMOJI_KASA} **{zarobek} ZŁ**",
-        f"Pomagałeś w sklepie i zarobiłeś {EMOJI_KASA} **{zarobek} ZŁ**"
+        f"💼 Pracowałeś u pani która zapłaciła ci {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🏗️ Pracowałeś na budowie i zarobiłeś {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"📦 Rozwoziłeś paczki i dostałeś {EMOJI_KASA} **{zarobek} ZŁ**",
+        f"🏪 Pomagałeś w sklepie i zarobiłeś {EMOJI_KASA} **{zarobek} ZŁ**"
     ]
     opis = random.choice(teksty_pracy)
 
@@ -153,7 +157,7 @@ async def pracuj(ctx: commands.Context):
     conn.close()
 
     wallet, _, _ = get_balance(ctx.author.id)
-    embed = discord.Embed(description=f"{opis}\n\n---\nZarób więcej za 4 godziny\nSaldo: {EMOJI_KASA} **{wallet:,} ZŁ**".replace(",", " "), color=discord.Color.green())
+    embed = discord.Embed(title="⛏️ Dniówka ukończona!", description=f"{opis}\n\n─────────────────\nZarób więcej za 4 godziny\nSaldo: {EMOJI_KASA} **{wallet:,} ZŁ**".replace(",", " "), color=discord.Color.teal())
     await ctx.send(embed=embed)
 
 # --- KOMENDA / PORTFEL ---
@@ -161,7 +165,7 @@ async def pracuj(ctx: commands.Context):
 async def portfel(ctx: commands.Context, member: discord.Member = None):
     target = member or ctx.author
     wallet, _, _ = get_balance(target.id)
-    embed = discord.Embed(title=f"Portfel: {target.display_name}", description=f"Stan konta: {EMOJI_KASA} **{wallet:,} ZŁ**".replace(",", " "), color=discord.Color.blue())
+    embed = discord.Embed(title=f"💳 Portfel: {target.display_name}", description=f"Stan konta: {EMOJI_KASA} **{wallet:,} ZŁ**".replace(",", " "), color=discord.Color.purple())
     await ctx.send(embed=embed)
 
 # --- SYSTEM SKLEPU ---
@@ -178,8 +182,8 @@ class ShopSelect(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         cat = self.values[0]
         items = SHOP_CONFIG.get(cat, [])
-        opis = "\n".join([f"{EMOJI_KASA} **{item['cena']:,} ZŁ** - `{item['nazwa']}`".replace(",", " ") for item in items]) or "Brak produktów."
-        embed = discord.Embed(title=f"🛒 Sklep - {cat}", description=f"{opis}\n\n*Użyj komendy `!Kup [Dokładna nazwa]` aby dokonać zakupu.*", color=discord.Color.gold())
+        opis = "\n".join([f"{item['emoji']} **{item['nazwa']}** — {EMOJI_KASA} **{item['cena']:,} ZŁ**".replace(",", " ") for item in items]) or "Brak produktów."
+        embed = discord.Embed(title=f"🛒 Sklep - {cat}", description=f"{opis}\n\n─────────────────\n*Użyj komendy `!Kup [Dokładna nazwa]` aby dokonać zakupu.*", color=discord.Color.orange())
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 class ShopView(discord.ui.View):
@@ -190,15 +194,15 @@ class ShopView(discord.ui.View):
 @bot.hybrid_command(name="sklep", description="Otwórz sklep z przedmiotami")
 async def sklep(ctx: commands.Context):
     if ctx.channel.id != ID_KANAL_EKONOMIA:
-        return await ctx.send(f"❌ Tej komendy można używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
+        return await ctx.send(f"❌ Tej komendy możesz używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
     
-    embed = discord.Embed(title="🛒 SKLEP VESPER RP", description="Wybierz interesującą Cię kategorię z menu poniżej:", color=discord.Color.gold())
+    embed = discord.Embed(title="🛒 SKLEP VESPER RP", description="Wybierz interesującą Cię kategorię z menu poniżej:", color=discord.Color.orange())
     await ctx.send(embed=embed, view=ShopView())
 
 @bot.hybrid_command(name="kup", description="Kup przedmiot ze sklepu")
 async def kup(ctx: commands.Context, *, nazwa: str):
     if ctx.channel.id != ID_KANAL_EKONOMIA:
-        return await ctx.send(f"❌ Tej komendy można używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
+        return await ctx.send(f"❌ Tej komendy możesz używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
 
     przedmiot = None
     for kat, items in SHOP_CONFIG.items():
@@ -225,13 +229,13 @@ async def kup(ctx: commands.Context, *, nazwa: str):
             except:
                 pass
 
-    await ctx.send(f"✅ Pomyślnie zakupiono **{przedmiot['nazwa']}** za {EMOJI_KASA} **{przedmiot['cena']:,} ZŁ**!".replace(",", " "))
+    await ctx.send(f"✅ Pomyślnie zakupiono **{przedmiot['nazwa']}** {przedmiot['emoji']} za {EMOJI_KASA} **{przedmiot['cena']:,} ZŁ**!".replace(",", " "))
 
 # --- RULETKA Z ANIMACJĄ ---
 @bot.hybrid_command(name="ruletka", description="Zagraj w ruletkę")
 async def ruletka(ctx: commands.Context, kwota: int, kolor: str, numerek: int = None):
     if ctx.channel.id != ID_KANAL_EKONOMIA:
-        return await ctx.send(f"❌ Tej komendy można używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
+        return await ctx.send(f"❌ Tej komendy możesz używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
 
     wallet, _, _ = get_balance(ctx.author.id)
     if kwota <= 0 or wallet < kwota:
@@ -241,8 +245,11 @@ async def ruletka(ctx: commands.Context, kwota: int, kolor: str, numerek: int = 
     if kolor not in ["czerwony", "czarny"]:
         return await ctx.send("❌ Wybierz prawidłowy kolor: `czerwony` lub `czarny`.", ephemeral=True)
 
-    msg = await ctx.send("🎰 **Kółko ruletki kręci się...** [ ⚪ ⚪ ⚪ ]")
-    await asyncio.sleep(1.2)
+    embed = discord.Embed(title="🎰 Kasyno Vesper", description="Krupier kręci kołem ruletki... Trwa losowanie!", color=discord.Color.dark_magenta())
+    embed.set_image(url=GIF_RULETKA)
+    msg = await ctx.send(embed=embed)
+    
+    await asyncio.sleep(3.0)
     
     wylosowany_kolor = random.choice(["czerwony", "czarny"])
     wylosowana_liczba = random.randint(0, 36)
@@ -252,20 +259,24 @@ async def ruletka(ctx: commands.Context, kwota: int, kolor: str, numerek: int = 
         wygrana = kwota * 2
 
     if numerek is not None and numerek == wylosowana_liczba:
-        wygrana = kwota * 14  # Bonus za trafienie dokładnego numerka
+        wygrana = kwota * 14
 
+    embed_result = discord.Embed(title="🎰 Wynik Ruletki", color=discord.Color.green() if wygrana > 0 else discord.Color.red())
+    
     if wygrana > 0:
         update_balance(ctx.author.id, wygrana - kwota)
-        await msg.edit(content=f"🎉 Wylosowano: **{wylosowany_kolor} ({wylosowana_liczba})**!\nWygrana: {EMOJI_KASA} **{wygrana:,} ZŁ**!".replace(",", " "))
+        embed_result.description = f"🎉 Wylosowano: **{wylosowany_kolor.upper()} ({wylosowana_liczba})**!\n\nWygrana: {EMOJI_KASA} **{wygrana:,} ZŁ**!".replace(",", " ")
     else:
         update_balance(ctx.author.id, -kwota)
-        await msg.edit(content=f"😢 Wylosowano: **{wylosowany_kolor} ({wylosowana_liczba})**. Przegrałeś {EMOJI_KASA} **{kwota:,} ZŁ**.".replace(",", " "))
+        embed_result.description = f"😢 Wylosowano: **{wylosowany_kolor.upper()} ({wylosowana_liczba})**.\n\nPrzegrałeś: {EMOJI_KASA} **{kwota:,} ZŁ**.".replace(",", " ")
+        
+    await msg.edit(embed=embed_result)
 
 # --- RZUT MONETĄ Z ANIMACJĄ ---
 @bot.hybrid_command(name="moneta", description="Zagraj w rzut monetą (50/50)")
 async def moneta(ctx: commands.Context, kwota: int, wybor: str):
     if ctx.channel.id != ID_KANAL_EKONOMIA:
-        return await ctx.send(f"❌ Tej komendy można używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
+        return await ctx.send(f"❌ Tej komendy możesz używać tylko na kanale <#{ID_KANAL_EKONOMIA}>.", ephemeral=True)
 
     wallet, _, _ = get_balance(ctx.author.id)
     if kwota <= 0 or wallet < kwota:
@@ -275,17 +286,26 @@ async def moneta(ctx: commands.Context, kwota: int, wybor: str):
     if wybor not in ["orzel", "reszka"]:
         return await ctx.send("❌ Wybierz `orzel` lub `reszka`.", ephemeral=True)
 
-    msg = await ctx.send("🪙 **Moneta leci w powietrze...** [ 🔄 ]")
-    await asyncio.sleep(1.2)
+    embed = discord.Embed(title="🪙 Rzut Monetą", description="Moneta szybuje wysoko w górę... obracając się!", color=discord.Color.gold())
+    embed.set_image(url="https://klipy.com/gifs/heads-coinflip")
+    msg = await ctx.send(embed=embed)
+    
+    await asyncio.sleep(2.5)
     
     wynik = random.choice(["orzel", "reszka"])
+    gif_wynik = GIF_ORZEL if wynik == "orzel" else GIF_RESZKA
+
+    embed_result = discord.Embed(title=f"🪙 Wynik rzutu: {wynik.upper()}", color=discord.Color.green() if wybor == wynik else discord.Color.red())
+    embed_result.set_image(url=gif_wynik)
 
     if wybor == wynik:
         update_balance(ctx.author.id, kwota)
-        await msg.edit(content=f"🪙 Wypadło: **{wynik.upper()}**! Wygrałeś {EMOJI_KASA} **{(kwota * 2):,} ZŁ**!".replace(",", " "))
+        embed_result.description = f"🎉 Doskonały strzał! Wygrałeś {EMOJI_KASA} **{(kwota * 2):,} ZŁ**!".replace(",", " ")
     else:
         update_balance(ctx.author.id, -kwota)
-        await msg.edit(content=f"🪙 Wypadło: **{wynik.upper()}**. Przegrałeś {EMOJI_KASA} **{kwota:,} ZŁ**.".replace(",", " "))
+        embed_result.description = f"😢 Niestety tym razem pech! Przegrałeś {EMOJI_KASA} **{kwota:,} ZŁ**.".replace(",", " ")
+
+    await msg.edit(embed=embed_result)
 
 @bot.event
 async def on_ready():
