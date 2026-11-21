@@ -11,10 +11,10 @@ from datetime import datetime, timedelta
 ID_KANAL_EKONOMIA = 1505624605535113349
 EMOJI_KASA = "<a:kasa:1571615073976324196>"
 
-# Linki do animacji (GIFY)
+# Linki do animacji (GIFY/MP4)
 GIF_RULETKA = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578321458397204/Td9fnldXXnoOJVy.gif"
-GIF_ORZEL = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578056042979411/5z6HiMsa.gif"
-GIF_RESZKA = "https://cdn.discordapp.com/attachments/1386424048270966820/1572578114075103355/JfEnIU0b.gif"
+GIF_ORZEL = "https://cdn.discordapp.com/attachments/1505624605535113349/1572676781587046471/Polish_Commemorative_Coin_Coin_Flip_Heads_To_Heads_02bTP8fz.mp4"
+GIF_RESZKA = "https://cdn.discordapp.com/attachments/1505624605535113349/1572676809018052638/Polish_Commemorative_Coin_Coin_Flip_Heads_To_Tails_AEKpk18S.mp4"
 
 # Konfiguracja ról do wypłat (!Odbierz) -> [ID Roli: Kwota]
 SALARY_CONFIG = {
@@ -87,12 +87,10 @@ bot = EconomyBot()
 def get_balance(user_id):
     conn = get_db_conn()
     cur = conn.cursor()
+    cur.execute("INSERT INTO economy (user_id, wallet) VALUES (%s, 0) ON CONFLICT DO NOTHING", (user_id,))
+    conn.commit()
     cur.execute("SELECT wallet, last_collect, last_work FROM economy WHERE user_id = %s", (user_id,))
     row = cur.fetchone()
-    if not row:
-        cur.execute("INSERT INTO economy (user_id, wallet) VALUES (%s, 0) ON CONFLICT DO NOTHING", (user_id,))
-        conn.commit()
-        row = (0, None, None)
     cur.close()
     conn.close()
     return row
@@ -134,7 +132,6 @@ async def odbierz(ctx: commands.Context):
 
     conn = get_db_conn()
     cur = conn.cursor()
-    cur.execute("INSERT INTO economy (user_id, wallet) VALUES (%s, 0) ON CONFLICT DO NOTHING", (ctx.author.id,))
     cur.execute("UPDATE economy SET wallet = wallet + %s, last_collect = %s WHERE user_id = %s", (total_added, now, ctx.author.id))
     conn.commit()
     cur.close()
@@ -183,7 +180,6 @@ async def pracuj(ctx: commands.Context):
 
     conn = get_db_conn()
     cur = conn.cursor()
-    cur.execute("INSERT INTO economy (user_id, wallet) VALUES (%s, 0) ON CONFLICT DO NOTHING", (ctx.author.id,))
     cur.execute("UPDATE economy SET wallet = wallet + %s, last_work = %s WHERE user_id = %s", (zarobek, now, ctx.author.id))
     conn.commit()
     cur.close()
@@ -293,9 +289,6 @@ async def ruletka(ctx: commands.Context, kwota: str, kolor: str, numerek: int = 
         except ValueError:
             return await ctx.send("❌ Podaj prawidłową kwotę lub wpisz `all`.", ephemeral=True)
 
-    if kwota_val <= 0 or wallet < kwota_val:
-        return await ctx.send("❌ Nie masz tyle pieniędzy w portfelu lub podano złą kwotę.", ephemeral=True)
-
     kolor = kolor.lower()
     if kolor not in ["czerwony", "czarny"]:
         return await ctx.send("❌ Wybierz prawidłowy kolor: `czerwony` lub `czarny`.", ephemeral=True)
@@ -343,9 +336,6 @@ async def moneta(ctx: commands.Context, kwota: str, wybor: str):
             kwota_val = int(kwota)
         except ValueError:
             return await ctx.send("❌ Podaj prawidłową kwotę lub wpisz `all`.", ephemeral=True)
-
-    if kwota_val <= 0 or wallet < kwota_val:
-        return await ctx.send("❌ Nie masz tyle pieniędzy w portfelu.", ephemeral=True)
 
     wybor = wybor.lower()
     if wybor not in ["orzel", "reszka"]:
