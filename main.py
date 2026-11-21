@@ -90,7 +90,7 @@ def get_balance(user_id):
     cur.execute("SELECT wallet, last_collect, last_work FROM economy WHERE user_id = %s", (user_id,))
     row = cur.fetchone()
     if not row:
-        cur.execute("INSERT INTO economy (user_id, wallet) VALUES (%s, 0)", (user_id,))
+        cur.execute("INSERT INTO economy (user_id, wallet) VALUES (%s, 0) ON CONFLICT DO NOTHING", (user_id,))
         conn.commit()
         row = (0, None, None)
     cur.close()
@@ -100,6 +100,7 @@ def get_balance(user_id):
 def update_balance(user_id, amount):
     conn = get_db_conn()
     cur = conn.cursor()
+    cur.execute("INSERT INTO economy (user_id, wallet) VALUES (%s, 0) ON CONFLICT DO NOTHING", (user_id,))
     cur.execute("UPDATE economy SET wallet = wallet + %s WHERE user_id = %s", (amount, user_id))
     conn.commit()
     cur.close()
@@ -133,6 +134,7 @@ async def odbierz(ctx: commands.Context):
 
     conn = get_db_conn()
     cur = conn.cursor()
+    cur.execute("INSERT INTO economy (user_id, wallet) VALUES (%s, 0) ON CONFLICT DO NOTHING", (ctx.author.id,))
     cur.execute("UPDATE economy SET wallet = wallet + %s, last_collect = %s WHERE user_id = %s", (total_added, now, ctx.author.id))
     conn.commit()
     cur.close()
@@ -181,6 +183,7 @@ async def pracuj(ctx: commands.Context):
 
     conn = get_db_conn()
     cur = conn.cursor()
+    cur.execute("INSERT INTO economy (user_id, wallet) VALUES (%s, 0) ON CONFLICT DO NOTHING", (ctx.author.id,))
     cur.execute("UPDATE economy SET wallet = wallet + %s, last_work = %s WHERE user_id = %s", (zarobek, now, ctx.author.id))
     conn.commit()
     cur.close()
